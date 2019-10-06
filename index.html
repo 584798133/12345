@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin:0;
+				padding:0;
+			}
+			#div{
+				width:100px;
+				height:100px;
+				background:red;
+				position: absolute;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="div"></div>
+		<script type="text/javascript">
+			class Animate {
+				constructor() {
+					this.ele = document.getElementById('div')   //获取到需要运动的元素节点
+				}
+				moveTo(x,y,duration){ 
+					return new Promise(res=>{            //使用promise进行链式调用
+						let left = this.ele.offsetLeft;  //获取到当前元素距父元素的left
+						let right = this.ele.offsetTop;	  //获取到当前元素距父元素的top
+						let speedleft = parseInt(parseFloat(((x - this.ele.offsetLeft) / duration) * 50));  //获取到速度  需要运动的距离/时间
+						let speedtop = parseInt(parseFloat(((y - this.ele.offsetTop) / duration) * 50));
+						var timer = setInterval(()=>{    //创建一个计时器
+							this.ele.style.left = this.ele.offsetLeft + speedleft + 'px'; //当前元素运动
+							this.ele.style.top = this.ele.offsetTop + speedtop + 'px';
+							if(Math.abs(x - this.ele.offsetLeft) < speedleft || Math.abs(y - this.ele.offsetTop) < speedtop){  //判断元素运动是否到达目标位置
+								this.ele.style.left = x + 'px';
+								this.ele.style.top = y + 'px';
+								clearInterval(timer);
+								res();
+							}
+						},50);
+					})
+					
+				}
+			}
+			var a = new Animate();
+			a.moveTo(200,200,3000).then(()=>{
+				a.moveTo(400,100,2000).then(()=>{
+					a.moveTo(300,500,2000)
+				})
+			})
+			
+		</script>
+	</body>
+</html>
